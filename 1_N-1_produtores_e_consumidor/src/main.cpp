@@ -36,12 +36,12 @@ int main(int argc, char *argv[]) {
       // threads.push_back(thread(chefs[i].behavior()));
       // threads.push_back(thread(Chef(), i, maxFoods))  
    }
-
+   cout << "Criei os chefs" << endl;
    for (auto i = 0; i < NUMBER_OF_ATENDENTES; i++) {
       Atendente atendente(i, &x, &mutexMeal, &semaphore);
       chefsThreads.push_back(thread(atendente));
    }
-
+   cout << "Criei os atendentes" << endl;
    for (auto & th : chefsThreads) th.join();
       // aux->join();
 

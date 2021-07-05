@@ -7,14 +7,16 @@ using namespace std;
 class Semaphore {
    private:
       unsigned int bufferSize;
-      unsigned int buffer = 0;
       
    public:
-      mutex semaphoreMutex;
+      mutex toBeDeliveredMutex;
+      mutex toBeProducedMutex;
+      mutex bufferMutex;
+      mutex dale;
       condition_variable consumer, producer;
-      unsigned int produced = 0;
-      unsigned int consumed = 0;
+      unsigned int buffer = 0;
       unsigned int toBeProduced;
+      unsigned int toBeDelivered;
 
       Semaphore(int bufferSize);
       bool down(unsigned int *buffer);

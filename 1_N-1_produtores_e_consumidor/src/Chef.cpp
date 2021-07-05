@@ -12,53 +12,55 @@ Chef::Chef (int id, int* mealsToBePrepared, mutex* mutexMeal,  Semaphore *semaph
 }
 
 void Chef::behavior() {
-   unique_lock<mutex> lck(semaphore->semaphoreMutex);
+   // unique_lock<mutex> lck(semaphore->toBeProducedMutex);
 
    while (true)
    {  
-      semaphore->semaphoreMutex.lock();
-      if (semaphore->toBeProduced == (*mealsToBePrepared)){
-         semaphore->semaphoreMutex.unlock();
-         break;
-      } 
-      semaphore->semaphoreMutex.unlock();
+      // semaphore->toBeProducedMutex.lock();
+      // if (semaphore->toBeProduced ==  0 /*(*mealsToBePrepared)*/){
+      //    semaphore->toBeProducedMutex.unlock();
+      //    break;
+      // } 
+      // semaphore->toBeProducedMutex.unlock();
 
       // while(semaphore->getBuffer() == semaphore->getBufferSize()) semaphore->producer.wait(lck);
 
-      semaphore->semaphoreMutex.lock();
+      semaphore->toBeProducedMutex.lock();
       if (!semaphore->down(&(semaphore->toBeProduced))) {
-         semaphore->semaphoreMutex.unlock();
+         semaphore->toBeProducedMutex.unlock();
          break;
       }
-      semaphore->semaphoreMutex.unlock();
+      semaphore->toBeProducedMutex.unlock();
 
       this_thread::sleep_for(PREPARE_TIME);
-      this->mutexMeal->lock();
-      mealsPrepared++;
-      cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << *(this->mealsToBePrepared) << endl;
-      this->mutexMeal->unlock();
 
-      // semaphore->up(&(semaphore->produced))
+      semaphore->bufferMutex.lock();
+      semaphore->up(&(semaphore->buffer));
+      this->mealsPrepared++;
+      cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << semaphore->toBeProduced << endl;
+      semaphore->bufferMutex.unlock();
+
+      semaphore->consumer.notify_all();
    }
    
 
-   while ((*(this->mealsToBePrepared)) > 0) {
+   // while ((*(this->mealsToBePrepared)) > 0) {
 
-      this_thread::sleep_for(PREPARE_TIME);
-      // if (semaphore->up() == false) {
+   //    this_thread::sleep_for(PREPARE_TIME);
+   //    // if (semaphore->up() == false) {
 
-      // }
+   //    // }
 
-      this->mutexMeal->lock();
-      if ((*(this->mealsToBePrepared)) == 0){
-         this->mutexMeal->unlock();
-         break;
-      } 
-      (*(this->mealsToBePrepared))--;
-      mealsPrepared++;
-      cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << *(this->mealsToBePrepared) << endl;
-      this->mutexMeal->unlock();
-   }
+   //    this->mutexMeal->lock();
+   //    if ((*(this->mealsToBePrepared)) == 0){
+   //       this->mutexMeal->unlock();
+   //       break;
+   //    } 
+   //    (*(this->mealsToBePrepared))--;
+   //    mealsPrepared++;
+   //    cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << *(this->mealsToBePrepared) << endl;
+   //    this->mutexMeal->unlock();
+   // }
 }
 
 void Chef::operator()() {

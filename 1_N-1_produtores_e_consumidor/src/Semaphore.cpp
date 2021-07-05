@@ -2,32 +2,34 @@
 
 using namespace std;
 
+// TODO - ACRESCENTAR toBeProduced NO CONSTRUTOR
 Semaphore::Semaphore(int bufferSize) {
    this->bufferSize = bufferSize;
    this->toBeProduced = bufferSize;
+   this->toBeDelivered = bufferSize;
 }
 
-// Retira um elemento do buffer
-bool Semaphore::down(unsigned int *buffer) {
-   if ((*buffer) > 0) {
-      (*buffer)--;
+// Retira um elemento de var
+bool Semaphore::down(unsigned int *var) {
+   if ((*var) > 0) {
+      (*var)--;
       return true;
    }
-   producer.notify_one();
+   // producer.notify_one();
    return false;
 }
 
-// Acrescenta um elemento no buffer
-bool Semaphore::up(unsigned int *buffer) {
-   if ((*buffer) == bufferSize) {
+// Acrescenta um elemento em var
+bool Semaphore::up(unsigned int *var) {
+   if ((*var) == bufferSize) {
       // producer.notify_all();
       return false;
    }
 
-   (*buffer)++;
-   if ((*buffer) == 1) {
-      consumer.notify_one();
-   }
+   (*var)++;
+   // if ((*var) == 1) {
+   //    consumer.notify_one();
+   // }
    return true;
 }
 

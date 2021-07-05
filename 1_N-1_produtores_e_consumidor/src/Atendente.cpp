@@ -12,19 +12,44 @@ Atendente::Atendente (int id, int* mealsToBeDelivered, mutex* mutexMeal, Semapho
 }
 
 void Atendente::behavior() {
-   while ((*(this->mealsToBeDelivered)) > 0) {
-      this_thread::sleep_for(DELIVER_TIME);
+   unique_lock<mutex> lck(semaphore->bufferMutex);
 
-      this->mutexMeal->lock();
-      if ((*(this->mealsToBeDelivered)) == 0){
-         this->mutexMeal->unlock();
+   while (true) {
+
+      semaphore->toBeDeliveredMutex.lock();
+      if (!semaphore->down(&(semaphore->toBeDelivered))) {
+         semaphore->toBeDeliveredMutex.unlock();
          break;
-      } 
-      (*(this->mealsToBeDelivered))--;
-      mealsDelivered++;
-      cout << "Atendente " << this->id << " entregou prato " << mealsDelivered << ", restam " << *(this->mealsToBeDelivered) << endl;
-      this->mutexMeal->unlock();
+      }
+      semaphore->toBeDeliveredMutex.unlock();
+
+      while(semaphore->getBuffer() == 0) semaphore->consumer.wait(lck);
+      this_thread::sleep_for(DELIVER_TIME);
+      // cout << "dale dele" << endl;
+
+      // semaphore->bufferMutex.lock();
+      // cout << "dale dele2" << endl;
+      semaphore->down(&(semaphore->buffer));
+      
+      this->mealsDelivered++;
+      cout << "Atendente " << this->id << " entregou seu prato #" << this->mealsDelivered << ", restam " << semaphore->toBeDelivered << endl;
+      // semaphore->bufferMutex.unlock();
+
+      // semaphore->consumer.notify_one();
    }
+   // while ((*(this->mealsToBeDelivered)) > 0) {
+   //    this_thread::sleep_for(DELIVER_TIME);
+
+   //    this->mutexMeal->lock();
+   //    if ((*(this->mealsToBeDelivered)) == 0){
+   //       this->mutexMeal->unlock();
+   //       break;
+   //    } 
+   //    (*(this->mealsToBeDelivered))--;
+   //    mealsDelivered++;
+   //    cout << "Atendente " << this->id << " entregou prato " << mealsDelivered << ", restam " << *(this->mealsToBeDelivered) << endl;
+   //    this->mutexMeal->unlock();
+   // }
 }
 
 void Atendente::operator()() {
