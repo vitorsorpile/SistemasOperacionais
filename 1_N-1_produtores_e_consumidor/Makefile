@@ -1,10 +1,10 @@
 PROJ_NAME=exercicio1
 
 # .c files
-C_SOURCE=$(wildcard *.cpp)
+C_SOURCE=$(wildcard src/*.cpp)
 
 # .h files
-H_SOURCE=$(wildcard *.h)
+H_SOURCE=$(wildcard src/*.h)
 
 # Object files
 OBJ=$(C_SOURCE:.c=.o)
