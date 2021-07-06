@@ -11,16 +11,18 @@ using namespace std;
 class Chef {
    int id;
    // chrono::microseconds time_working = 0us;
-   mutex *mutexMeal;
-   static int mealsPrepared;
-   int *mealsToBePrepared;
+   mutex *writeMutex;
+
+   int mealsPrepared = 0;
+
    Semaphore *semaphore;
 
    public:
       void behavior();
       void operator()();
 
-      Chef (int id, int* mealsToBePrepared, mutex* mutexMeal, Semaphore *semaphore);
+      Chef (int id, mutex* writeMutex, Semaphore *semaphore);
+      ~Chef();
 
 };
 

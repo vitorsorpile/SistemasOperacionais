@@ -12,7 +12,7 @@ class Semaphore {
       mutex toBeDeliveredMutex;
       mutex toBeProducedMutex;
       mutex bufferMutex;
-      mutex dale;
+      mutex semaphoreMutex;
       condition_variable consumer, producer;
       unsigned int buffer = 0;
       unsigned int toBeProduced;

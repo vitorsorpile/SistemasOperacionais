@@ -2,12 +2,9 @@
 
 using namespace std;
 
-int Chef::mealsPrepared = 0;
-
-Chef::Chef (int id, int* mealsToBePrepared, mutex* mutexMeal,  Semaphore *semaphore) {
+Chef::Chef (int id, mutex* writeMutex,  Semaphore *semaphore) {
    this->id = id;
-   this->mealsToBePrepared = mealsToBePrepared;
-   this->mutexMeal = mutexMeal;
+   this->writeMutex = writeMutex;
    this->semaphore = semaphore;
 }
 
@@ -16,14 +13,6 @@ void Chef::behavior() {
 
    while (true)
    {  
-      // semaphore->toBeProducedMutex.lock();
-      // if (semaphore->toBeProduced ==  0 /*(*mealsToBePrepared)*/){
-      //    semaphore->toBeProducedMutex.unlock();
-      //    break;
-      // } 
-      // semaphore->toBeProducedMutex.unlock();
-
-      // while(semaphore->getBuffer() == semaphore->getBufferSize()) semaphore->producer.wait(lck);
 
       semaphore->toBeProducedMutex.lock();
       if (!semaphore->down(&(semaphore->toBeProduced))) {
@@ -36,14 +25,15 @@ void Chef::behavior() {
 
       semaphore->bufferMutex.lock();
       semaphore->up(&(semaphore->buffer));
-      this->mealsPrepared++;
-      cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << semaphore->toBeProduced << endl;
+      // cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << semaphore->toBeProduced << endl;
       semaphore->bufferMutex.unlock();
+      this->mealsPrepared++;
 
-      semaphore->consumer.notify_all();
+      semaphore->consumer.notify_one();
    }
-   
-
+   this->writeMutex->lock();
+   std::cout << "Chefe " << this->id << " produziu " << this->mealsPrepared << endl;
+   this->writeMutex->unlock();
    // while ((*(this->mealsToBePrepared)) > 0) {
 
    //    this_thread::sleep_for(PREPARE_TIME);
@@ -66,3 +56,5 @@ void Chef::behavior() {
 void Chef::operator()() {
    return this->behavior();
 }
+
+Chef::~Chef() {}

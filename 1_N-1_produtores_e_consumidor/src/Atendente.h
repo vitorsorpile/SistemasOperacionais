@@ -12,14 +12,13 @@ using namespace std;
 class Atendente {
    private:
       int id;
-      // chrono::microseconds timeWorking = 0us;
-      mutex *mutexMeal;
-      static int mealsDelivered;
-      int *mealsToBeDelivered;
+      mutex *writeMutex;
+      int mealsDelivered = 0;
+
       Semaphore *semaphore;
 
    public:
       void behavior();
       void operator()();
-      Atendente (int id, int* mealsToBeDelivered, mutex* mutexMeal, Semaphore *semaphore);
+      Atendente (int id,  mutex* writeMutex, Semaphore *semaphore);
 };
