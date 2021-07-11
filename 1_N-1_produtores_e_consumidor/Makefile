@@ -35,5 +35,13 @@ $(PROJ_NAME): $(OBJ)
 main.o: main.cpp $(H_SOURCE)
 	$(CC) -o $@ $< $(CC_FLAGS)
 
+
+valgrind:
+	valgrind --leak-check=full --track-origins=yes ./$(PROJ_NAME) 
+
 clean:
 	rm -rf src/*.o $(PROJ_NAME) *~
+
+remake:
+	$(MAKE) clean
+	$(MAKE)
