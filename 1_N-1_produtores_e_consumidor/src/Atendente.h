@@ -1,3 +1,6 @@
+#ifndef _ATENDENTE_H
+#define _ATENDENTE_H
+
 #include <iostream>
 #include <mutex>
 #include <chrono>
@@ -12,7 +15,6 @@ using namespace std;
 class Atendente {
    private:
       int id;
-      mutex *writeMutex;
       int mealsDelivered = 0;
 
       Semaphore *semaphore;
@@ -20,5 +22,7 @@ class Atendente {
    public:
       void behavior();
       void operator()();
-      Atendente (int id,  mutex* writeMutex, Semaphore *semaphore);
+      Atendente (int id, Semaphore *semaphore);
 };
+
+#endif

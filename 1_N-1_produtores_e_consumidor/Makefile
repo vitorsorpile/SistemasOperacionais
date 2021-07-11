@@ -7,7 +7,7 @@ C_SOURCE=$(wildcard src/*.cpp)
 H_SOURCE=$(wildcard src/*.h)
 
 # Object files
-OBJ=$(C_SOURCE:.c=.o)
+OBJ=$(C_SOURCE:.cpp=.o)
 
 # Compiler
 CC=g++
@@ -15,9 +15,11 @@ CC=g++
 # Flags for compiler
 CC_FLAGS= -Wall      \
           -Wextra    \
-          -pthread   \
           -std=c++17 \
-#          -pedantic	
+			 -Werror		\
+			 -pthread   \
+			 -pedantic	\
+			 -g			\
 
 #
 # Compilation and linking
@@ -28,10 +30,10 @@ $(PROJ_NAME): $(OBJ)
 	$(CC) -o $@ $^ $(CC_FLAGS)
 
 %.o: %.cpp %.h
-	$(CC) -o $@ $< $(CC_FLAGS)
+	$(CC) -o $@ -c $< $(CC_FLAGS)
 
 main.o: main.cpp $(H_SOURCE)
 	$(CC) -o $@ $< $(CC_FLAGS)
 
 clean:
-	rm -rf *.o $(PROJ_NAME) *~
+	rm -rf src/*.o $(PROJ_NAME) *~

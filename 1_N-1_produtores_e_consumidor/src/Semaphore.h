@@ -18,12 +18,10 @@ class Semaphore {
       unsigned int toBeProduced;
       unsigned int toBeDelivered;
 
-      Semaphore(int bufferSize);
+      Semaphore(int n, int bufferSize);
       bool down(unsigned int *buffer);
       bool up(unsigned int *buffer);
       unsigned int getBuffer();
-      // unsigned int getConsumed();
-      // unsigned int getProduced();
       unsigned int getBufferSize();
 };
 

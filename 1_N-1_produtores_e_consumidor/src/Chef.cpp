@@ -2,38 +2,37 @@
 
 using namespace std;
 
-Chef::Chef (int id, mutex* writeMutex,  Semaphore *semaphore) {
+Chef::Chef (int id, Semaphore *semaphore) {
    this->id = id;
-   this->writeMutex = writeMutex;
    this->semaphore = semaphore;
 }
 
-void Chef::behavior() {
+void Chef::behavior(Chef* This) {
    // unique_lock<mutex> lck(semaphore->toBeProducedMutex);
 
    while (true)
    {  
-
-      semaphore->toBeProducedMutex.lock();
-      if (!semaphore->down(&(semaphore->toBeProduced))) {
-         semaphore->toBeProducedMutex.unlock();
+      This->semaphore->toBeProducedMutex.lock();
+      if (!This->semaphore->down(&(This->semaphore->toBeProduced))) {
+         This->semaphore->toBeProducedMutex.unlock();
          break;
       }
-      semaphore->toBeProducedMutex.unlock();
+      This->semaphore->toBeProducedMutex.unlock();
 
       this_thread::sleep_for(PREPARE_TIME);
 
-      semaphore->bufferMutex.lock();
-      semaphore->up(&(semaphore->buffer));
+      This->semaphore->bufferMutex.lock();
+      This->semaphore->up(&(This->semaphore->buffer));
       // cout << "Chef " << this->id << " preparou prato " << mealsPrepared << ", restam " << semaphore->toBeProduced << endl;
-      semaphore->bufferMutex.unlock();
-      this->mealsPrepared++;
+      This->semaphore->bufferMutex.unlock();
+      This->mealsPrepared++;
 
-      semaphore->consumer.notify_one();
+      This->semaphore->consumer.notify_one();
    }
-   this->writeMutex->lock();
-   std::cout << "Chefe " << this->id << " produziu " << this->mealsPrepared << endl;
-   this->writeMutex->unlock();
+   // return nullptr;
+   // this->writeMutex->lock();
+   // std::cout << "Chefe " << this->id << " produziu " << this->mealsPrepared << endl;
+   // this->writeMutex->unlock();
    // while ((*(this->mealsToBePrepared)) > 0) {
 
    //    this_thread::sleep_for(PREPARE_TIME);
@@ -53,8 +52,17 @@ void Chef::behavior() {
    // }
 }
 
-void Chef::operator()() {
-   return this->behavior();
+// void Chef::operator()() {
+//    return this->behavior();
+// }
+
+int Chef::getMealsPrepared() {
+   return this->mealsPrepared;
+}
+
+int Chef::getId() {
+   return this->id;
 }
 
 Chef::~Chef() {}
+

@@ -1,3 +1,6 @@
+#ifndef _CHEF_H
+#define _CHEF_H
+
 #include <iostream>
 #include <mutex>
 #include <chrono>
@@ -10,19 +13,19 @@ using namespace std;
 
 class Chef {
    int id;
-   // chrono::microseconds time_working = 0us;
-   mutex *writeMutex;
 
    int mealsPrepared = 0;
 
    Semaphore *semaphore;
 
    public:
-      void behavior();
-      void operator()();
+      static void behavior(Chef*);
+      int getMealsPrepared();
+      int getId();
 
-      Chef (int id, mutex* writeMutex, Semaphore *semaphore);
+      Chef (int id, Semaphore *semaphore);
       ~Chef();
 
 };
 
+#endif

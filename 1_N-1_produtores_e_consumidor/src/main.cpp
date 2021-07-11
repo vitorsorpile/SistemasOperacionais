@@ -12,7 +12,6 @@
 using namespace std;
 
 
-// int foodsPrepared = 0;
 int main(int argc, char *argv[]) {
    int maxMeals = 50;
    if (argc > 1) {
@@ -20,38 +19,49 @@ int main(int argc, char *argv[]) {
       ss >> maxMeals;
    }
 
-   // vector<Chef*> chefs;
-   // Chef* aux;
-
+   vector<Chef*> chefs;
    vector<thread> chefsThreads;
    vector<thread> atendentesThreads;
    mutex writeMutex;
-   Semaphore semaphore(maxMeals);
+   Semaphore semaphore(maxMeals, maxMeals);
 
    for (auto i = 0; i < NUMBER_OF_CHEFS; i++) {
-      // aux = new Chef(i, &maxFoods);
-      // chefs.push_back(new Chef(i, &maxFoods));
-      Chef chef(i+1, &writeMutex, &semaphore);
-      chefsThreads.push_back(thread(chef));
-      // threads.push_back(Chef)
-      // threads.push_back(thread(chefs[i].behavior()));
-      // threads.push_back(thread(Chef(), i, maxFoods))  
+
+      chefs.push_back(new Chef(i+1,&semaphore));
+      chefsThreads.push_back(thread(&Chef::behavior, chefs[i]));
+
    }
 
    for (auto i = 0; i < NUMBER_OF_ATENDENTES; i++) {
-      Atendente atendente(i+1, &writeMutex, &semaphore);
+      Atendente atendente(i+1, &semaphore);
       atendentesThreads.push_back(thread(atendente));
    }
 
    for (auto & th : chefsThreads) th.join();
 
-
    for (auto & th : atendentesThreads) th.join();
    
+   int maisOcioso = 1, menosOcioso = 1, maior = chefs[0]->getMealsPrepared(), menor = maior, meals;
+   for (auto & chef: chefs) {
+      
+      meals = chef->getMealsPrepared();
+      if (meals > maior) {
+         menosOcioso = chef->getId();
+         maior = meals;
+      }
+
+      if(meals < menor) {
+         maisOcioso = chef->getId();
+         menor = meals;
+      }
+
+      cout << "Chefe " << chef->getId() << " produziu " << meals << endl;
+      delete chef;
+   }
+
+   cout << "O chefe menos ocioso foi o " << menosOcioso << endl;
+   cout << "O chefe mais ocioso foi o " << maisOcioso << endl;
    
    
-   // for (int i = 0; i < NUMBER_OF_CHEFS; i++ ) delete chefs[i];
-   // for(int index = 0; index < (int)chefs.size(); index++ )
-   //      	if(chefs[index])delete chefs[index];
    return 0;
 }
