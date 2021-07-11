@@ -21,13 +21,13 @@ void Semaphore::printPhilosophersStates(int id) {
       switch (philosophersStates[i])
       {
       case HUNGRY:
-         str +=  " faminto ";
+         str +=  " faminto  ";
          break;
       case THINKING:
          str +=  " pensando ";
          break;
       case EATING:
-         str +=  " comendo ";
+         str +=  " comendo  ";
          break;
       default:
          str += " so sei que nada sei...";

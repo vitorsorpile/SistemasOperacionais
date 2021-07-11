@@ -17,10 +17,9 @@ CC_FLAGS= -Wall      \
           -std=c++17 \
 			 -Werror		\
 			 -pthread   \
+			 -pedantic	\
 			 -g			\
 			
-#          -pedantic	
-
 #
 # Compilation and linking
 #
