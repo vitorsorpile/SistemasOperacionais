@@ -13,7 +13,7 @@
    ```bash
    ./exercicio1 N
    ```
-      onde N é o número de refeições a serem produzidas e consumidas. 
+   onde N é um argumento opcional, se não passado será usado o valor 50, que representa o número de refeições a serem produzidas e consumidas. 
 
 -> Para remover os arquivos objeto ("*.o"):
    Abra o terminal na pasta "1_N-1_produtores_e_consumidor" e digite:
