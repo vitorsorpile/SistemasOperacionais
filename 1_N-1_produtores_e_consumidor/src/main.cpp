@@ -26,10 +26,8 @@ int main(int argc, char *argv[]) {
    Semaphore semaphore(maxMeals, maxMeals);
 
    for (auto i = 0; i < NUMBER_OF_CHEFS; i++) {
-
       chefs.push_back(new Chef(i+1,&semaphore));
       chefsThreads.push_back(thread(&Chef::behavior, chefs[i]));
-
    }
 
    for (auto i = 0; i < NUMBER_OF_ATENDENTES; i++) {

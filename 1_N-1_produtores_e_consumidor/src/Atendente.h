@@ -14,7 +14,7 @@ using namespace std;
 
 class Atendente {
    private:
-      int id;
+      int _id;
       int mealsDelivered = 0;
 
       Semaphore *semaphore;
@@ -22,7 +22,7 @@ class Atendente {
    public:
       void behavior();
       void operator()();
-      Atendente (int id, Semaphore *semaphore);
+      Atendente (int id, Semaphore *sem);
 };
 
 #endif

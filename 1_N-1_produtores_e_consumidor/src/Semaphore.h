@@ -6,7 +6,7 @@
 using namespace std;
 class Semaphore {
    private:
-      unsigned int bufferSize;
+      unsigned int _bufferSize;
       
    public:
       mutex toBeDeliveredMutex;

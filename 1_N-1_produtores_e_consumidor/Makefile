@@ -19,6 +19,7 @@ CC_FLAGS= -Wall      \
 			 -Werror		\
 			 -pthread   \
 			 -pedantic	\
+			 -Wshadow	\
 			 -g			\
 
 #

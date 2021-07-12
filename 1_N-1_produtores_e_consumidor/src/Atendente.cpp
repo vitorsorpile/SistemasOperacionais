@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Atendente::Atendente (int id, Semaphore *semaphore) {
-   this->id = id;
-   this->semaphore = semaphore;
+Atendente::Atendente (int id, Semaphore *sem) {
+   this->_id = id;
+   this->semaphore = sem;
 }
 
 void Atendente::behavior() {

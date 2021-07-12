@@ -12,10 +12,8 @@
 using namespace std;
 
 class Chef {
-   int id;
-
+   int _id;
    int mealsPrepared = 0;
-
    Semaphore *semaphore;
 
    public:
@@ -23,7 +21,7 @@ class Chef {
       int getMealsPrepared();
       int getId();
 
-      Chef (int id, Semaphore *semaphore);
+      Chef (int id_, Semaphore *sem);
       ~Chef();
 
 };

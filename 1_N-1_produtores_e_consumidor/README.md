@@ -1,7 +1,7 @@
 # N-1 Produtores e Consumidor
 
 # Contribuintes
- Gustavo Henrique Grützmann (19102053) & Vitor Sorpile Geraldo (19102063)
+Gustavo Henrique Grützmann (19102053) & Vitor Sorpile Geraldo (19102063)
 
 # Compilação e Execução
 
