@@ -2,11 +2,11 @@
 
 using namespace std;
 
-Chef::Chef (int id, shared_ptr<Semaphore> semaphore) 
+Chef::Chef (int chefId, shared_ptr<Semaphore> sem) 
    : thread(threadFunction, this)
  {
-   this->id = id;
-   this->semaphore = semaphore;
+   this->_id = chefId;
+   this->semaphore = sem;
 }
 
 void* Chef::threadFunction(Chef* This) {
@@ -28,7 +28,7 @@ void Chef::behavior() {
       this_thread::sleep_for(PREPARE_TIME);
 
       semaphore->bufferMutex.lock();
-      semaphore->up(&(semaphore->buffer));
+      semaphore->up(&(semaphore->_buffer));
       // cout << "Chef " << id << " preparou prato " << mealsPrepared << ", restam " << semaphore->toBeProduced << endl;
       semaphore->bufferMutex.unlock();
       mealsPrepared++;
@@ -67,8 +67,7 @@ int Chef::getMealsPrepared() {
 }
 
 int Chef::getId() {
-   return this->id;
+   return this->_id;
 }
 
 Chef::~Chef() {}
-

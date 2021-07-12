@@ -15,6 +15,7 @@ CC=g++
 # Flags for compiler
 CC_FLAGS= -Wall      \
           -Wextra    \
+			 -Wshadow	\
           -std=c++17 \
 			 -Werror		\
 			 -pthread   \

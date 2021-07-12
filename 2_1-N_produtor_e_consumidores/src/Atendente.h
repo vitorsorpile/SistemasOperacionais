@@ -14,7 +14,7 @@ using namespace std;
 
 class Atendente: public thread {
    private:
-      int id;
+      int _id;
       int mealsDelivered = 0;
 
       shared_ptr<Semaphore> semaphore;
@@ -22,7 +22,7 @@ class Atendente: public thread {
    public:
       void behavior();
       static void* threadFunction(Atendente* This);
-      Atendente (int id, shared_ptr<Semaphore> semaphore);
+      Atendente (int atendenteId, shared_ptr<Semaphore> sem);
       int getMealsDelivered();
       int getId();
 };

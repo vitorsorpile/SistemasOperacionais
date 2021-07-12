@@ -12,8 +12,8 @@
 using namespace std;
 
 class Chef : public thread {
-   int id;
 
+   int _id;
    int mealsPrepared = 0;
 
    shared_ptr<Semaphore> semaphore;
@@ -24,7 +24,7 @@ class Chef : public thread {
       int getId();
       static void* threadFunction(Chef* This);
 
-      Chef (int id, shared_ptr<Semaphore> semaphore);
+      Chef (int chefId, shared_ptr<Semaphore> sem);
       ~Chef();
 
 };

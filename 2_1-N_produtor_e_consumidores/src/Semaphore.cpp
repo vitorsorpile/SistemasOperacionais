@@ -5,7 +5,7 @@ using namespace std;
 Semaphore::Semaphore(int n, int bufferSize) {
    this->toBeProduced = n;
    this->toBeDelivered = n;
-   this->bufferSize = bufferSize;
+   this->_bufferSize = bufferSize;
 }
 
 // Retira um elemento de var
@@ -19,7 +19,7 @@ bool Semaphore::down(unsigned int *var) {
 
 // Acrescenta um elemento em var
 bool Semaphore::up(unsigned int *var) {
-   if ((*var) == bufferSize) {
+   if ((*var) == _bufferSize) {
       return false;
    }
 
@@ -28,9 +28,9 @@ bool Semaphore::up(unsigned int *var) {
 }
 
 unsigned int Semaphore::getBuffer() {
-   return this->buffer;
+   return this->_buffer;
 }
 
 unsigned int Semaphore::getBufferSize() {
-   return this->bufferSize;
+   return this->_bufferSize;
 }

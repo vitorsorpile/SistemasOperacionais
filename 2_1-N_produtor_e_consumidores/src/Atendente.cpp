@@ -2,11 +2,11 @@
 
 using namespace std;
 
-Atendente::Atendente (int id, shared_ptr<Semaphore> semaphore)
+Atendente::Atendente (int atendenteId, shared_ptr<Semaphore> sem)
    : thread(threadFunction, this)
    {
-   this->id = id;
-   this->semaphore = semaphore;
+   this->_id = atendenteId;
+   this->semaphore = sem;
 }
 
 void* Atendente::threadFunction(Atendente* This) {
@@ -31,7 +31,7 @@ void Atendente::behavior() {
       this_thread::sleep_for(DELIVER_TIME);
 
       semaphore->bufferMutex.lock();
-      semaphore->down(&(semaphore->buffer));
+      semaphore->down(&(semaphore->_buffer));
       
       this->mealsDelivered++;
       semaphore->bufferMutex.unlock();
@@ -40,7 +40,7 @@ void Atendente::behavior() {
 }
 
 int Atendente::getId(){
-   return this->id;
+   return this->_id;
 }
 
 int Atendente::getMealsDelivered() {
