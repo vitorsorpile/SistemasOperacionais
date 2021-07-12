@@ -3,7 +3,7 @@
 Semaphore::Semaphore(int numberOfPhilosophers)
    : forksMutex(numberOfPhilosophers), philosophersStates(numberOfPhilosophers), mealsEaten(numberOfPhilosophers) 
    {
-   this->numberOfPhilosophers = numberOfPhilosophers;
+   this->_numberOfPhilosophers = numberOfPhilosophers;
 
    for (int i = 0; i < numberOfPhilosophers; i++) {
       this->philosophersStates[i] = THINKING;
@@ -14,7 +14,7 @@ Semaphore::Semaphore(int numberOfPhilosophers)
 void Semaphore::printPhilosophersStates(int id) {
    // system("clear");
    
-   for(int i = 0; i < numberOfPhilosophers; i++ ) {
+   for(int i = 0; i < _numberOfPhilosophers; i++ ) {
       string str;
       str += "Filosofo " + std::to_string(i) + " esta";
 
@@ -45,4 +45,8 @@ void Semaphore::printPhilosophersStates(int id) {
    }
 
    std::cout << std::endl << std::endl;
+}
+
+int Semaphore::getNumberOfPhilosophers() {
+   return this->_numberOfPhilosophers;
 }

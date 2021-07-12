@@ -12,13 +12,13 @@ using namespace std;
    
 class Filosofo : public thread {
 
-   int id;
+   int _id;
    shared_ptr<Semaphore> semaphore;
-   int maxMeals;
+   int _maxMeals;
 
    public:
       void behavior();
-      Filosofo(int id, shared_ptr<Semaphore> semaphore, int maxMeals);
+      Filosofo(int philosopherId, shared_ptr<Semaphore> sem, int maxMeals);
       bool test(int philosopherId);
 
       static void* threadFunction(Filosofo* This) {
