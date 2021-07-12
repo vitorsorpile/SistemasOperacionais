@@ -8,6 +8,9 @@
 
 #include "Semaphore.h"
 
+#define EATING_TIME std::chrono::seconds(2)
+#define THINKING_TIME std::chrono::seconds(2)
+
 using namespace std;
    
 class Filosofo : public thread {
@@ -17,9 +20,10 @@ class Filosofo : public thread {
    int _maxMeals;
 
    public:
-      void behavior();
       Filosofo(int philosopherId, shared_ptr<Semaphore> sem, int maxMeals);
-      bool test(int philosopherId);
+      ~Filosofo();
+      void behavior();
+      void test(int philosopherId);
 
       static void* threadFunction(Filosofo* This) {
          ((Filosofo *)This)->behavior(); return nullptr;

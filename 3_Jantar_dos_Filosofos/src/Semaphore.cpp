@@ -1,7 +1,8 @@
 #include "Semaphore.h"
 
 Semaphore::Semaphore(int numberOfPhilosophers)
-   : forksMutex(numberOfPhilosophers), philosophersStates(numberOfPhilosophers), mealsEaten(numberOfPhilosophers) 
+   : forksMutex(numberOfPhilosophers), philosophersCVs(numberOfPhilosophers),
+      philosophersStates(numberOfPhilosophers), mealsEaten(numberOfPhilosophers + 1) 
    {
    this->_numberOfPhilosophers = numberOfPhilosophers;
 
@@ -9,12 +10,16 @@ Semaphore::Semaphore(int numberOfPhilosophers)
       this->philosophersStates[i] = THINKING;
       this->mealsEaten[i] = 0;
    }
+   // Por algum motivo, é preciso acrescentar um elemento ao vector para evitar erros de memória 
+   // na função printPhilosophersStates
+   this->mealsEaten[numberOfPhilosophers] = 0;
 }
 
+Semaphore::~Semaphore() {}
+
 void Semaphore::printPhilosophersStates(int id) {
-   // system("clear");
    
-   for(int i = 0; i < _numberOfPhilosophers; i++ ) {
+   for(int i = 0; i < _numberOfPhilosophers; i++) {
       string str;
       str += "Filosofo " + std::to_string(i) + " esta";
 

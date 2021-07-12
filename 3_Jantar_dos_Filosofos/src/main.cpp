@@ -32,6 +32,6 @@ int main(int argc, char *argv[]) {
    for(auto & filosofo : filosofos) {
       filosofo->join();
    }
-
+   
    return 0;
 }
