@@ -21,7 +21,7 @@ class Chef {
       int getMealsPrepared();
       int getId();
 
-      Chef (int id_, Semaphore *sem);
+      Chef (int id, Semaphore *sem);
       ~Chef();
 
 };
