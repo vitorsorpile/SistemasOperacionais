@@ -16,11 +16,14 @@ CC=g++
 CC_FLAGS= -Wall      \
           -Wextra    \
 			 -Wshadow	\
-          -std=c++17 \
+			 -Wconversion \
+			 -Wcast-align \
 			 -Werror		\
+          -std=c++17 \
 			 -pthread   \
 			 -pedantic	\
 			 -g			\
+
 
 #
 # Compilation and linking
@@ -38,9 +41,10 @@ main.o: main.cpp $(H_SOURCE)
 
 
 valgrind:
+	$(MAKE)
 	valgrind --leak-check=full --track-origins=yes -s ./$(PROJ_NAME)
 
-clean:
+clean:	
 	rm -rf src/*.o $(PROJ_NAME) *~
 
 remake:
