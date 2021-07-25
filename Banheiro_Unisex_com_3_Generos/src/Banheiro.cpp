@@ -1,16 +1,40 @@
 #include "Banheiro.h"
 
 Banheiro::Banheiro()
-   :  generosCVs(N_BOXES), 
-      tempoTotalDeCadaGeneroNaFila(3, std::chrono::seconds(0)),
+   :  tempoTotalDeCadaGeneroNaFila(3, std::chrono::seconds(0)),
+      tempoDeUsoDoBox(N_BOXES, std::chrono::seconds(0)),
       totalPessoasPorGenero(3, 0),
-      boxes(N_BOXES, false), boxesMtxs(N_BOXES),
-      boxUsedTime(N_BOXES, std::chrono::seconds(0)),
-      filas(3)
+      boxes(N_BOXES, false), boxesMtxs(N_BOXES)
    {}
 
 Banheiro::~Banheiro() {}
 
+int Banheiro::getStall() {
+    for (unsigned int i = 0; i < this->boxes.size(); i++) {
+      this->boxesMtxs[i].lock();
+      if (this->boxes[i] == false) {
+         this->boxes[i] = true;
+         this->banheiroMtx.lock();
+         this->nBoxesDisponiveis--;
+         this->banheiroMtx.unlock();
+         this->boxesMtxs[i].unlock();
+         return i;
+      }
+      this->boxesMtxs[i].unlock();
+   }
+   return -1;
+}
+
+void Banheiro::leaveStall(int boxUsado, std::chrono::time_point<std::chrono::steady_clock> comecoDoUsoDoBox) {
+   this->boxesMtxs[boxUsado].lock();
+   this->boxes[boxUsado] = false;
+   auto agora = std::chrono::steady_clock::now();
+   this->tempoDeUsoDoBox[boxUsado] += std::chrono::duration_cast <std::chrono::duration<double>> (agora - comecoDoUsoDoBox);
+   this->banheiroMtx.lock();
+   this->nBoxesDisponiveis++;
+   this->banheiroMtx.unlock();
+   this->boxesMtxs[boxUsado].unlock();
+}
 
 void Banheiro::comecarUso() {
    this->comecoDoUso = std::chrono::steady_clock::now();
@@ -24,13 +48,13 @@ int Banheiro::getN_BOXES() {
    return this->N_BOXES;
 }
 
-void Banheiro::setGeneroUsando(int genero) {
-   this->generoUsando = genero;
-}
+// void Banheiro::setGeneroUsando(int genero) {
+//    this->generoUsando = genero;
+// }
 
-int Banheiro::getGeneroUsando() {
-   return this->generoUsando;
-}
+// int Banheiro::getGeneroUsando() {
+//    return this->generoUsando;
+// }
 
 void Banheiro::setEmUso(bool estado) {
    this->emUso = estado;
@@ -42,8 +66,6 @@ bool Banheiro::getEmUso() {
 
 void Banheiro::addTempoNaFila(int genero, std::chrono::duration<double> tempo) {
    this->tempoTotalDeCadaGeneroNaFila[genero] += tempo;
-
-   // std::cout << "Genero " << genero << " ja esperou no total por " << this->tempoTotalDeCadaGeneroNaFila[genero].count() << " segundos"<< std::endl;
 }
 
 double Banheiro::getTempoNaFila(int genero) {
@@ -56,4 +78,8 @@ void Banheiro::addPessoaDoGenero(int genero) {
 
 int Banheiro::getTotalPessoasPorGenero(int genero) {
    return this->totalPessoasPorGenero[genero];
+}
+
+double Banheiro::getTempoDeUsoDoBox(int genero) {
+   return this->tempoDeUsoDoBox[genero].count();
 }
