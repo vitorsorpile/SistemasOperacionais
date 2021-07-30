@@ -22,9 +22,9 @@ class Filosofo : public thread {
    public:
       Filosofo(int philosopherId, shared_ptr<Semaphore> sem, int maxMeals);
       ~Filosofo();
+
       void behavior();
       void test(int philosopherId);
-
       static void* threadFunction(Filosofo* This) {
          ((Filosofo *)This)->behavior(); return nullptr;
       } 

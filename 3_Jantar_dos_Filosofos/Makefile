@@ -38,7 +38,7 @@ main.o: main.cpp $(H_SOURCE)
 
 
 valgrind:
-	valgrind --leak-check=full --track-origins=yes ./$(PROJ_NAME) 
+	valgrind --leak-check=full --track-origins=yes -s ./$(PROJ_NAME) 3
 
 clean:
 	rm -rf src/*.o $(PROJ_NAME) *~

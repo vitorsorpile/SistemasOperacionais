@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-#define NUMBER_OF_PHILOSOPHERS 5
+#define NUMBER_OF_PHILOSOPHERS 10
 
 using namespace std;
 
@@ -32,6 +32,6 @@ int main(int argc, char *argv[]) {
    for(auto & filosofo : filosofos) {
       filosofo->join();
    }
-   
+
    return 0;
 }

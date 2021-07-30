@@ -43,7 +43,7 @@ void Filosofo::behavior() {
       test(this->_id);
       semaphore->forksAcessMutex.unlock();
 
-      // Trava o mutex desse filosofo se não conseguiu pegar os garfos
+      // Bloqueia a thread desse filosofo se não conseguiu pegar os garfos
       while (semaphore->philosophersStates[this->_id] != EATING ) {
          semaphore->philosophersCVs[this->_id].wait(lck);
       }
