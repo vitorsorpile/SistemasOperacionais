@@ -1,6 +1,6 @@
-PROJ_NAME=banheiro
+PROJ_NAME=banheiro_problema2
 
-# .c files
+# .cpp files
 C_SOURCE=$(wildcard src/*.cpp)
 
 # .h files

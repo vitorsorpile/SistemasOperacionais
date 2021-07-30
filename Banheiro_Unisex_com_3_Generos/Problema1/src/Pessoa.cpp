@@ -1,8 +1,10 @@
 #include "Pessoa.h"
 
+// Variáveis static
 std::vector<std::vector<Pessoa*>> Pessoa::filas(3);
 std::mutex Pessoa::filaMtx;
 std::chrono::seconds Pessoa::TEMPO_PARA_USAR_O_BANHEIRO = std::chrono::seconds(5);
+
 
 Pessoa::Pessoa(int pessoaId, GENEROS genero, Banheiro* banheiro) 
    : std::thread(threadFunction, this)
@@ -24,28 +26,12 @@ void Pessoa::enterRestroom() {
    _banheiro->banheiroMtx.lock();
    if (!_banheiro->getEmUso()) {
       this->liberarParaUsarBanheiro();
-      // _banheiro->setGeneroUsando(this->_genero);
       _banheiro->setEmUso(true);
-      _banheiro->comecarUso();
       _banheiro->banheiroMtx.unlock();
       return;
    }
    _banheiro->banheiroMtx.unlock();
 
-
-   // Caso em que o banheiro está sendo usado por pessoas do mesmo gênero e há box disponível
-   // _banheiro->banheiroMtx.lock();
-   // if (_banheiro->getEmUso() && _banheiro->nBoxesDisponiveis) {
-   //    if (_banheiro->getGeneroUsando() == this->_genero && _banheiro->getComecoDoUso() >= std::chrono::steady_clock::now() - std::chrono::seconds(2)) {
-   //       // std::cout << this->_id <<" : banheiro ja estava sendo utilizado" << std::endl;
-   //       this->liberarParaUsarBanheiro();
-   //       this->entradaNaFila = std::chrono::steady_clock::now();
-   //       this->sairDaFila();
-   //       _banheiro->banheiroMtx.unlock();
-   //       return;
-   //    } 
-   // }
-   // _banheiro->banheiroMtx.unlock();
 
    // Entra na fila e espera até ser liberado para usar banheiro
    filaMtx.lock();
@@ -56,7 +42,6 @@ void Pessoa::enterRestroom() {
 
    // Seta o banheiro em uso para o gênero da pessoa e sai da fila
    _banheiro->banheiroMtx.lock();
-   // _banheiro->setGeneroUsando(this->_genero);
    _banheiro->setEmUso(true);
    this->sairDaFila();
    _banheiro->banheiroMtx.unlock();
@@ -84,22 +69,22 @@ void Pessoa::behavior() {
 
    // Libera o box usado e passa quando começou a utilizá-lo para contar o tempo total de uso do box
    _banheiro->leaveStall(this->boxUsado, this->comecoDoUsoDoBox);
-   std::cout << "Pessoa " << this->_id << '[' << this->_genero << ']' << " usou box " << this->boxUsado << std::endl;
+   // std::cout << "Pessoa " << this->_id << '[' << this->_genero << ']' << " usou box " << this->boxUsado << std::endl; // DEBUG
 
    _banheiro->banheiroMtx.lock(); 
 
-   // Verifica se foi o último do gênero a sair do box
-   if (_banheiro->getN_BOXES() == _banheiro->nBoxesDisponiveis) {
+   // Verifica se foi o último do gênero a sair do banheiro
+   if (_banheiro->getN_BOXES() == _banheiro->getnBoxesDisponiveis()) {
       filaMtx.lock();
         
       // Calcula qual gênero deve ser o próximo a usar o banheiro
       long int generoDaVez = this->calcularProximoGenero();
-      std::cout << "Genero da vez -> " << generoDaVez << std::endl << std::endl << std::endl;
+      // std::cout << "Genero da vez -> " << generoDaVez << std::endl << std::endl << std::endl; // DEBUG
 
       // Verifica se a fila do gênero não está vazia
       if (filas[generoDaVez].size() != 0) {
          // Libera e notifica para usar o banheiro o máximo de pessoas na fila do gênero até não ter box disponível 
-         for (int i = 0; i < _banheiro->nBoxesDisponiveis && (unsigned) i < filas[generoDaVez].size(); i++) {
+         for (int i = 0; i < _banheiro->getnBoxesDisponiveis() && (unsigned) i < filas[generoDaVez].size(); i++) {
             filas[generoDaVez][i]->liberarParaUsarBanheiro();
             filas[generoDaVez][i]->cv.notify_one();
          }
@@ -109,9 +94,11 @@ void Pessoa::behavior() {
          return;
       }
       filaMtx.unlock();
+      
+      // Caso as filas estejam vazias, muda o estado do banheiro
+      _banheiro->setEmUso(false);
    }
 
-   _banheiro->setEmUso(false);
    _banheiro->banheiroMtx.unlock();
 
    return;
@@ -135,7 +122,7 @@ long int Pessoa::calcularProximoGenero() {
          tempoMedio[i] /= _banheiro->getTotalPessoasPorGenero(i);
       }
 
-      std::cout << "Tempo medio -> " << tempoMedio[i] << std::endl;
+      // std::cout << "Tempo medio -> " << tempoMedio[i] << std::endl; // DEBUG
    }
 
    return std::distance(tempoMedio, std::max_element(tempoMedio, tempoMedio + 3)); 

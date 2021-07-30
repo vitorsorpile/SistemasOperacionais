@@ -13,7 +13,6 @@ GeradorDePessoas::GeradorDePessoas(int nPessoas, Banheiro* banheiro, bool nPesso
 GeradorDePessoas::~GeradorDePessoas() {}
 
 void GeradorDePessoas::behavior() {
-   // std::this_thread::sleep_for(std::chrono::milliseconds(100));
    int pessoasPorGenero[3] = {0};
    int genero;
    std::vector<std::unique_ptr<Pessoa>> pessoas;
@@ -31,17 +30,16 @@ void GeradorDePessoas::behavior() {
       auto t = tempoParaChegar(generator);
       tempoMedioDeChegada += t;
       std::this_thread::sleep_for(std::chrono::seconds(t));
-      // std::cout << "Tempo entre pessoas -> " << t << std::endl;
+      // std::cout << "\nTempo entre pessoas -> " << t << std::endl; // DEBUG
       pessoas.push_back(std::unique_ptr<Pessoa>(new Pessoa(i+1, (GENEROS) genero, this->_banheiro)));
 
-      genero = this->generos(this->generator);
    }
 
    for (auto & pessoa : pessoas)
       pessoa->join();
 
 
-   std::cout << "\nTempo médio de chegada das pessoas: " << tempoMedioDeChegada/_nPessoas << " segundos." << std::endl;
+   // std::cout << "\nTempo médio de chegada das pessoas: " << tempoMedioDeChegada/_nPessoas << " segundos." << std::endl;
 }
 
 void GeradorDePessoas::threadFunction(GeradorDePessoas *This) {

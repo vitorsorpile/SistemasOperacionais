@@ -9,9 +9,11 @@ Banheiro::Banheiro()
 
 Banheiro::~Banheiro() {}
 
+// Retorna o primeiro box disponível e muda o estado do box para sendo utilizado
 int Banheiro::getStall() {
     for (unsigned int i = 0; i < this->boxes.size(); i++) {
       this->boxesMtxs[i].lock();
+      // Box estar false significa que não está sendo utilizado e true que está sendo utilizado
       if (this->boxes[i] == false) {
          this->boxes[i] = true;
          this->banheiroMtx.lock();
@@ -25,6 +27,8 @@ int Banheiro::getStall() {
    return -1;
 }
 
+// A partir do time_point comecoDoUsoDoBox calcula por quanto tempo o box boxUsado foi utilizado, soma esse tempo 
+// no seu contador e libera-o para uso
 void Banheiro::leaveStall(int boxUsado, std::chrono::time_point<std::chrono::steady_clock> comecoDoUsoDoBox) {
    this->boxesMtxs[boxUsado].lock();
    this->boxes[boxUsado] = false;
@@ -36,25 +40,14 @@ void Banheiro::leaveStall(int boxUsado, std::chrono::time_point<std::chrono::ste
    this->boxesMtxs[boxUsado].unlock();
 }
 
-void Banheiro::comecarUso() {
-   this->comecoDoUso = std::chrono::steady_clock::now();
-}
-
-std::chrono::time_point<std::chrono::steady_clock> Banheiro::getComecoDoUso() {
-   return this->comecoDoUso;
-}
-
+// Funções para acessar as variáveis da classe ("setters e getters")
 int Banheiro::getN_BOXES() {
    return this->N_BOXES;
 }
 
-// void Banheiro::setGeneroUsando(int genero) {
-//    this->generoUsando = genero;
-// }
-
-// int Banheiro::getGeneroUsando() {
-//    return this->generoUsando;
-// }
+int Banheiro::getnBoxesDisponiveis() {
+   return this->nBoxesDisponiveis;
+}
 
 void Banheiro::setEmUso(bool estado) {
    this->emUso = estado;

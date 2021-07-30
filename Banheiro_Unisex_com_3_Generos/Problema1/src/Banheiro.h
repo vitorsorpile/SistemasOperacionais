@@ -6,9 +6,6 @@
 #include <mutex>
 #include <condition_variable>
 #include <thread>
-#include "Pessoa.h"
-
-class Pessoa;
 
 class Banheiro {
    private:
@@ -16,27 +13,28 @@ class Banheiro {
       std::vector<std::chrono::duration<double>> tempoTotalDeCadaGeneroNaFila;
       std::vector<std::chrono::duration<double>> tempoDeUsoDoBox;
       std::vector<int> totalPessoasPorGenero;
-      std::vector<bool> boxes;
+      std::vector<bool> boxes;                            // true significa que box está em uso e false que está livre
       std::vector<std::mutex> boxesMtxs;
-      std::chrono::time_point<std::chrono::steady_clock> comecoDoUso;
-      // int generoUsando;
-      bool emUso = false;
+      bool emUso = false;                                // estado do banheiro
+      int nBoxesDisponiveis = N_BOXES;
 
    public:
-      int nBoxesDisponiveis = N_BOXES;
       std::mutex banheiroMtx;
 
+      // Contrutor e destrutor
       Banheiro();
       ~Banheiro();
-
+      
+      // Retorna o primeiro box disponível 
       int getStall();
-      void leaveStall(int boxUsado, std::chrono::time_point<std::chrono::steady_clock> comecoDoUsoDoBox);
-      void comecarUso();
 
-      std::chrono::time_point<std::chrono::steady_clock> getComecoDoUso();
+      // A partir do time_point comecoDoUsoDoBox calcula por quanto tempo o box boxUsado foi utilizado, soma esse tempo 
+      // no seu contador e libera-o para uso
+      void leaveStall(int boxUsado, std::chrono::time_point<std::chrono::steady_clock> comecoDoUsoDoBox);
+
+      // Funções para acessar as variáveis da classe ("setters e getters")
       int getN_BOXES();
-      // void setGeneroUsando(int genero);
-      // int getGeneroUsando();
+      int getnBoxesDisponiveis();
       void setEmUso(bool estado);
       bool getEmUso();
       void addTempoNaFila(int genero, std::chrono::duration<double> tempo);
