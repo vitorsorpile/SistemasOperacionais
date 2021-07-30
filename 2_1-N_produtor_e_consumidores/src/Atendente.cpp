@@ -9,6 +9,8 @@ Atendente::Atendente (int atendenteId, shared_ptr<Semaphore> sem)
    this->semaphore = sem;
 }
 
+Atendente::~Atendente() {}
+
 void* Atendente::threadFunction(Atendente* This) {
    This->behavior(); return nullptr;
 }

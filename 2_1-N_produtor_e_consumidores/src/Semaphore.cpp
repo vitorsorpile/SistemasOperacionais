@@ -8,6 +8,8 @@ Semaphore::Semaphore(int n, int bufferSize) {
    this->_bufferSize = bufferSize;
 }
 
+Semaphore::~Semaphore() {}
+
 // Retira um elemento de var
 bool Semaphore::down(unsigned int *var) {
    if ((*var) > 0) {

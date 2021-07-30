@@ -20,9 +20,10 @@ class Atendente: public thread {
       shared_ptr<Semaphore> semaphore;
 
    public:
+      Atendente (int atendenteId, shared_ptr<Semaphore> sem);
+      ~Atendente();
       void behavior();
       static void* threadFunction(Atendente* This);
-      Atendente (int atendenteId, shared_ptr<Semaphore> sem);
       int getMealsDelivered();
       int getId();
 };

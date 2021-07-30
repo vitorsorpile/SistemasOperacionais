@@ -8,7 +8,7 @@
 #include "Chef.h"
 #include "Semaphore.h"
 
-#define NUMBER_OF_CHEFS 2
+#define NUMBER_OF_CHEFS 1
 #define NUMBER_OF_ATENDENTES 6
 using namespace std;
 
@@ -19,10 +19,6 @@ int main(int argc, char *argv[]) {
       std::stringstream ss(argv[1]);
       ss >> maxMeals;
    }
-   // unique_ptr<Atendente> atendentes;
-   // vector<Atendente*> atendentes;
-   // vector<thread> chefsThreads;
-   // vector<thread> atendentesThreads;
 
    shared_ptr<Semaphore> semaphore = shared_ptr<Semaphore> (new Semaphore(maxMeals, maxMeals));
    vector<unique_ptr<Chef>> chefs; 

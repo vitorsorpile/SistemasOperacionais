@@ -19,13 +19,14 @@ class Chef : public thread {
    shared_ptr<Semaphore> semaphore;
 
    public:
+      Chef (int chefId, shared_ptr<Semaphore> sem);
+      ~Chef();
+      
       void behavior();
       int getMealsPrepared();
       int getId();
       static void* threadFunction(Chef* This);
 
-      Chef (int chefId, shared_ptr<Semaphore> sem);
-      ~Chef();
 
 };
 
