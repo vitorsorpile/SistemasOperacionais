@@ -7,6 +7,8 @@ Atendente::Atendente (int id, Semaphore *sem) {
    this->semaphore = sem;
 }
 
+Atendente::~Atendente() {}
+
 void Atendente::behavior() {
 
    while (true) {

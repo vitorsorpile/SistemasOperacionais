@@ -20,9 +20,10 @@ class Atendente {
       Semaphore *semaphore;
 
    public:
+      Atendente (int id, Semaphore *sem);
+      ~Atendente();
       void behavior();
       void operator()();
-      Atendente (int id, Semaphore *sem);
 };
 
 #endif

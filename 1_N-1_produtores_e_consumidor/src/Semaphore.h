@@ -19,6 +19,7 @@ class Semaphore {
       unsigned int toBeDelivered;
 
       Semaphore(int n, int bufferSize);
+      ~Semaphore();
       bool down(unsigned int *buffer);
       bool up(unsigned int *buffer);
       unsigned int getBuffer();

@@ -8,6 +8,8 @@ Semaphore::Semaphore(int n, int bufferSize) {
    this->_bufferSize = bufferSize;
 }
 
+Semaphore::~Semaphore() {}
+
 // Retira um elemento de var
 bool Semaphore::down(unsigned int *var) {
    if ((*var) > 0) {
@@ -17,7 +19,7 @@ bool Semaphore::down(unsigned int *var) {
    return false;
 }
 
-// Acrescenta um elemento em var
+// Acrescenta um elemento em var ou retorna falso se o buffer já estiver cheio
 bool Semaphore::up(unsigned int *var) {
    if ((*var) == _bufferSize) {
       return false;

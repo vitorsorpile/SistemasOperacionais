@@ -7,6 +7,8 @@ Chef::Chef (int id, Semaphore *sem) {
    this->semaphore = sem;
 }
 
+Chef::~Chef() {}
+
 void Chef::behavior(Chef* This) {
 
    while (true)
@@ -37,6 +39,3 @@ int Chef::getMealsPrepared() {
 int Chef::getId() {
    return this->_id;
 }
-
-Chef::~Chef() {}
-
