@@ -3,8 +3,11 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 #include "Processo.h"
+#include "Sistema.h"
+
 
 int main(int argc, char *argv[]) {
 
@@ -22,7 +25,7 @@ int main(int argc, char *argv[]) {
 
    std::string line;
    int start, space, atributos[3], id = 0;
-   std::vector<Processo> processos;
+   std::vector<std::shared_ptr<Processo>> processos;
 
    // Leitura do arquivo com os processos
    while ( std::getline (file,line) )
@@ -36,7 +39,7 @@ int main(int argc, char *argv[]) {
       }
 
       // Criação dos processos
-      processos.push_back(Processo(id, atributos[0], atributos[1], atributos[2]));
+      processos.push_back(std::shared_ptr<Processo>(new Processo(id, atributos[0], atributos[1], atributos[2])) );
       id++;
    }
    file.close();
@@ -48,12 +51,15 @@ int main(int argc, char *argv[]) {
 
    // Ordenação dos processos por data de criação a partir da sobrecarga do operador <
    std::sort(processos.begin(), processos.end());
-   for (auto & processo : processos) {
-      std::cout << processo;
-   }
+   // for (auto & processo : processos) {
+   //    std::cout << processo.get();
+   // }
 
+   Escalonador esc;
 
+   Sistema sist(processos, &esc);
 
+   sist.executar();
    // while (processos) {
 
    //       if (acabou processo)
