@@ -12,30 +12,40 @@ class Processo {
    int duracao;
    int prioridadeEstatica;
    int prioridadeDinamica;
-   int tempoExecutado = 0;
    int tempoPronto = 0;
    ESTADO _estado = NAO_PRONTO;
-   int ultimaExecucao = -1;
+   int ultimaExecucao = -1; // POSSIVELMENTE NÀO SERVE PARA NADA
+   int dataDeFinalizacao;
+   int tempoDeEspera = 0;
 
    public:
+      int tempoExecutado = 0;
       Processo(int id, int criacao, int duracao, int prioridade);
       ~Processo();
 
-
       void realizarCiclo(int ciclo);
+      void envelhecer(int fatorDeEnvelhecimento);
+      void incrementarTempoDeEspera();
+
       // Sobrecargas de operador
       bool operator< (const Processo &other) const;
       friend std::ostream& operator<<(std::ostream& os, const Processo& processo);
 
       //GETs
       int getId();
-      int getDataDeCriacao();
+      int getDataDeCriacao() const;
       int getDuracao() const;
-      int getTempoExecutado();
+      int getPrioridadeEstatica() const;
+      int getPrioridadeDinamica() const;
+      int getTempoExecutado() const;
+      int getDataDeFinalizacao() const;
+      int getTempoDeEspera() const;
       ESTADO getEstado();
 
       //SETs
       void setEstado(ESTADO estado);
+      void setDataDeFinalizacao(int data);
+      void resetarPrioridadeDinamica();
 };
 
 

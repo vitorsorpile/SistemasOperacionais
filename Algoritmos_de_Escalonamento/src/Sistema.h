@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <memory>
+#include <iomanip>
 
 #include "Processo.h"
 #include "Escalonador.h"
@@ -13,10 +14,12 @@ class Sistema {
    private:
       int ciclo = 0;
       int nProcessosRestantes;
+      int trocasDeContexto = 0;
       std::vector<std::shared_ptr<Processo>> _processos;
       Escalonador* _escalonador;
 
-      void enviarNovosProcessosProntosAoEscalonador();
+      bool enviarNovosProcessosProntosAoEscalonador();
+      void incrementarTemposDeEspera();
 
    public:
       Sistema(std::vector<std::shared_ptr<Processo>> processos, Escalonador *escalonador);

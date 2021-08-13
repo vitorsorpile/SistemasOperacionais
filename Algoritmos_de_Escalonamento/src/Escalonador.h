@@ -7,21 +7,26 @@
 #include "Processo.h"
 
 class Escalonador {
-   private:
+   protected:
       std::vector<Processo*> _processos;
       Processo* processoAtual = nullptr;
       bool preemptavel = false;
+      int _quantum = -1;
+      int _fatorDeEnvelhecimento = 0;
 
 
    public:
       Escalonador();
       ~Escalonador();
 
-      // virtual void escalonaProcessos() = 0; 
-      void escalonaProcessos();
+      // virtual bool precisaEscalonar() = 0;
+      virtual void escalonaProcessos() = 0; 
+      void envelhecerProcessos(int fatorDeEnvelhecimento);
 
       Processo* getProcessoAtual();
       bool getPreemptavel();
+      int getQuantum();
+      int getFatorDeEnvelhecimento();
 
       void adicionarProcesso(Processo* processo);
       void removerProcesso(Processo* processo);
