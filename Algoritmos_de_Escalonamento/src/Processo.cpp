@@ -6,48 +6,29 @@ Processo::Processo(int processoId, int criacao, int dur, int prioridade) {
    this->duracao = dur;
    this->prioridadeEstatica = prioridade;
    this->prioridadeDinamica = prioridade;
-   // std::cout << this->prioridadeDinamica << std::endl;
 }
 
 Processo::~Processo() {}
 
-void Processo::realizarCiclo(int ciclo) {
+void Processo::realizarCiclo() {
 
    if (this->_estado == PRONTO) {
       this->_estado = EXECUTANDO;
    }
 
    this->tempoExecutado++;
-   this->ultimaExecucao = ciclo;
-
-   // if (this->tempoExecutado == this->duracao) {
-   //    this->_estado = FINALIZADO;
-   // }
 }
 
 void Processo::envelhecer(int fatorDeEnvelhecimento) {
    this->prioridadeDinamica += fatorDeEnvelhecimento;
-   // std::cout << "Processo " << this->id << " agora tem prioridade " << this->prioridadeDinamica << std::endl;
 }
 
 void Processo::incrementarTempoDeEspera() {
    this->tempoDeEspera++;
 }
 
-bool Processo::operator< (const Processo &other) const {
-   return this->dataDeCriacao < other.dataDeCriacao;
-}
-
-std::ostream& operator<<(std::ostream& os, const Processo& processo) {
-   os << "Processo " << processo.id << ": " << processo.dataDeCriacao << " | ";
-   os << processo.duracao << " | " << processo.prioridadeEstatica << std::endl;
-
-   return os;
-}
-
-
 // GETs
-int Processo::getId() {
+int Processo::getId() const {
    return this->id;
 }
 
@@ -55,7 +36,7 @@ int Processo::getDataDeCriacao() const{
    return this->dataDeCriacao;
 }
 
-ESTADO Processo::getEstado() {
+ESTADO Processo::getEstado() const {
    return this->_estado;
 }
 

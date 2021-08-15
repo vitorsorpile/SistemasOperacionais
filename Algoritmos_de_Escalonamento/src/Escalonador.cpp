@@ -25,7 +25,6 @@ void Escalonador::adicionarProcesso(Processo* processo) {
    this->_processos.push_back(processo);
 }
 
-
 void Escalonador::removerProcesso(Processo* processo) {
    _processos.erase(std::remove(_processos.begin(), _processos.end(), processo), _processos.end());
    if (processo == this->processoAtual)

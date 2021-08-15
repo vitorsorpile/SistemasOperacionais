@@ -6,6 +6,9 @@
 
 #include "Processo.h"
 
+/* Classe abstrata usada para facilitar a implementação de escalonadores, é preciso apenas sobrecarregar
+ * a função escalonaProcessos e inicializar os atributos conforme desejado para que o Sistema chame o escalonador 
+ * na hora certa */
 class Escalonador {
    protected:
       std::vector<Processo*> _processos;
@@ -19,19 +22,25 @@ class Escalonador {
       Escalonador();
       ~Escalonador();
 
-      // virtual bool precisaEscalonar() = 0;
+      /* Função que precisa ser sobrecarregada */
       virtual void escalonaProcessos() = 0; 
+
+      /* Aumenta a prioridade dinâmica de todos os processos que estão prontos e não estão sendo executados */
       void envelhecerProcessos(int fatorDeEnvelhecimento);
 
+      /* Adiciona um processo no vetor de processos a serem escalonados */
+      void adicionarProcesso(Processo* processo);
+
+      /* Remove um processo no vetor de processos a serem escalonados */
+      void removerProcesso(Processo* processo);
+      
+
+      // GETs
       Processo* getProcessoAtual();
       bool getPreemptavel();
       int getQuantum();
       int getFatorDeEnvelhecimento();
 
-      void adicionarProcesso(Processo* processo);
-      void removerProcesso(Processo* processo);
-      
 };
-
 
 #endif

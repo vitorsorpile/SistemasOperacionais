@@ -8,7 +8,6 @@ Sistema::Sistema(std::vector<std::shared_ptr<Processo>> processos, Escalonador* 
 
 Sistema::~Sistema() {}
 
-// Envia para o escalonador os processos que ficam prontos no ciclo atual
 bool Sistema::enviarNovosProcessosProntosAoEscalonador() {
    bool enviouProcessos = false;
    for (auto &processo : this->_processos) {
@@ -25,6 +24,7 @@ bool Sistema::enviarNovosProcessosProntosAoEscalonador() {
 // Imprime o estado dos processos no ciclo atual
 void Sistema::printCicloAtual() {
    std::string tempo = std::to_string(this->ciclo - 1) + '-' + std::to_string(this->ciclo);
+   std::cout << "| ";
    std::cout << std::left << std::setw(10) << tempo;
    
    std::string posicao;
@@ -39,9 +39,6 @@ void Sistema::printCicloAtual() {
       case EXECUTANDO:
          caracter = '#';
          break;
-      case FINALIZADO:
-         caracter = 'x';
-         break;
       default:
          caracter = ' ';
          break;
@@ -51,7 +48,7 @@ void Sistema::printCicloAtual() {
       for (int i = 0; i < qntDeCaracteres; i++) 
          std::cout << caracter;
    }
-      std::cout << std::endl;
+      std::cout << " |" << std::endl;
 }
 
 void Sistema::incrementarTemposDeEspera() {
@@ -62,18 +59,38 @@ void Sistema::incrementarTemposDeEspera() {
    }
 }
 
+void Sistema::printEstatisticas() {
+   double turnAroundTimeTotal = 0.0, tempoDeEsperaTotal = 0.0;
+   std::cout << std::endl;
+   for (auto & processo: this->_processos) {
+      tempoDeEsperaTotal += processo->getTempoDeEspera();
+      turnAroundTimeTotal += processo->getDataDeFinalizacao() - processo->getDataDeCriacao();
+      std::cout << "\033[1;34;1m" << "Processo " << processo->getId() << ": " << std::endl;
+      std::cout << "\033[0;m" <<"   Turnaround time: " << processo->getDataDeFinalizacao() - processo->getDataDeCriacao() << " segundos" <<  std::endl;
+      std::cout << "   Tempo de espera: " << processo->getTempoDeEspera() << " segundos"  << std::endl;
+
+   }
+   std::cout << std::endl;
+   std::cout << "\e[1;1m" << "Turnaroud Time Médio: " << "\e[0;m" <<  turnAroundTimeTotal/this->_processos.size() << " segundos" << std::endl; 
+   std::cout << "\e[1;1m" << "Tempo médio de espera: " << "\e[0;m" << tempoDeEsperaTotal/this->_processos.size() << " segundos" << std::endl;
+   std::cout << "\e[1;1m" << "Trocas de contexto: " << "\e[0;m" << trocasDeContexto << std::endl;
+
+}
+
 // Função principal que define o comportamento do sistema, faz o relacionamento entre o escalonador e os processos. 
 void Sistema::executar() {
 
    // Imprime cabeçalho da saída
+   std::cout << std::endl;
+   std::cout << "| " << "\e[1m";
    std::cout << std::left << std::setw(10) << "tempo";
    std::string posicao;
    for (auto& processo: this->_processos) {
       posicao = " P" + std::to_string(processo.get()->getId());
       std::cout << posicao;
    }
-   std::cout << std::endl;
-
+   std::cout << "\e[0m" << " |" << std::endl;
+   
    int quantum = _escalonador->getQuantum(), quantumsNesseProcesso = 0;
    int fatorDeEnvelhecimento = _escalonador->getFatorDeEnvelhecimento();
    bool escalonar = false, enviouProcessos = false;
@@ -90,19 +107,15 @@ void Sistema::executar() {
       } 
 
       // Escalona se for preemptável e tiver enviado novos processos ao escalonador 
-      if (_escalonador->getPreemptavel() && enviouProcessos && quantum == -1) {
+      if (_escalonador->getPreemptavel() && enviouProcessos) {
          escalonar = true;
       }
 
       // Escalona a cada número determinado de quantums
-      if (_escalonador->getPreemptavel() && quantumsNesseProcesso % quantum == 0) {
+      if (quantum != -1 && quantumsNesseProcesso % quantum == 0) {
          escalonar = true;
       }
 
-      // Envelhece os processos caso o fator de envelhecimento seja diferente de zero
-      if (fatorDeEnvelhecimento != 0) {
-         _escalonador->envelhecerProcessos(fatorDeEnvelhecimento);
-      }
       // Se for preciso escalonar, troca o processo em execução
       if (escalonar) {
          Processo *processoAnterior = processoAtual;
@@ -113,14 +126,20 @@ void Sistema::executar() {
          quantumsNesseProcesso = 0;
          _escalonador->escalonaProcessos();
          processoAtual = _escalonador->getProcessoAtual();
-         processoAtual->setEstado(EXECUTANDO);
+         if (processoAtual)
+            processoAtual->setEstado(EXECUTANDO);
          if (processoAtual != processoAnterior) trocasDeContexto++;
       }
-      
+
+      // Envelhece os processos caso o fator de envelhecimento seja diferente de zero
+      if (fatorDeEnvelhecimento != 0) {
+         _escalonador->envelhecerProcessos(fatorDeEnvelhecimento);
+      }
+
       this->incrementarTemposDeEspera();
 
       if (processoAtual) {
-         processoAtual->realizarCiclo(this->ciclo);
+         processoAtual->realizarCiclo();
       }
 
       this->ciclo++;
@@ -139,33 +158,6 @@ void Sistema::executar() {
       quantumsNesseProcesso++;
       escalonar = false;
    }
-   
-   std::cout << "--------- Turnaroud Time e Tempo de Espera ---------" << std::endl;
-   double turnAroundTimeTotal = 0.0, tempoDeEsperaTotal = 0.0;
 
-   for (auto & processo: this->_processos) {
-      tempoDeEsperaTotal += processo->getTempoDeEspera();
-      turnAroundTimeTotal += processo->getDataDeFinalizacao() - processo->getDataDeCriacao();
-      std::cout << "Processo " << processo->getId() << ": " << processo->getDataDeFinalizacao() - processo->getDataDeCriacao() << " segundos";
-      std::cout << " e " << processo->getTempoDeEspera() << " segundos"  << std::endl;
-
-   }
-
-   std::cout << "Turnaroud Time Médio: " << turnAroundTimeTotal/this->_processos.size() << " segundos" << std::endl; 
-   std::cout << "Tempo médio de espera: " << tempoDeEsperaTotal/this->_processos.size() << " segundos" << std::endl;
-   std::cout << "Trocas de contexto: " << trocasDeContexto << std::endl;
+   this->printEstatisticas();
 }
-   
-
-
-// A cada 1 segundo
-// if escalonador->processoAtual():
-//    processo->tempoRealizado++;
-// 
-
-// if escalonador->preemptavel:
-//       escalonaProcesso()
-
-// if prioridade_dinamica
-//       envelhecerProcessos()
-//

@@ -3,13 +3,13 @@
 class FCFS : public Escalonador {
 
    void escalonaProcessos() override {
+
       std::sort(_processos.begin(), _processos.end(), 
          [](const Processo *x, const Processo *y) {
             return x->getDataDeCriacao() < y->getDataDeCriacao();
          });
 
       this->processoAtual = this->_processos.size() != 0 ? this->_processos[0] : nullptr;
-      // this->processoAtual = this->_processos[0];
    }
 };
 
@@ -63,7 +63,6 @@ class RoundRobin : public Escalonador {
       RoundRobin(int quantum)
          : Escalonador()
       {
-         this->preemptavel = true;
          this->_quantum = quantum;
       }
 
@@ -80,13 +79,11 @@ class RoundRobin : public Escalonador {
             primeiro = this->_processos[0];
             this->_processos.erase(this->_processos.begin());
             this->_processos.push_back(primeiro);
-            // std::move(this->_processos.begin(), this->_processos.begin() + 1, this->_processos.end());
             this->processoAtual = this->_processos[0];
          }
          else {
             this->processoAtual = nullptr;
          }
-         // this->_processos.
       }
 };
 
@@ -95,7 +92,6 @@ class RoundRobinComEnvelhecimento : public Escalonador {
       RoundRobinComEnvelhecimento(int quantum, int fatorDeEnvelhecimento) 
          : Escalonador()
       {
-         this->preemptavel = true;
          this->_quantum = quantum;
          this->_fatorDeEnvelhecimento = fatorDeEnvelhecimento;
       }
