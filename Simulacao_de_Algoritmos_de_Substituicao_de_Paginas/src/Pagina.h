@@ -4,29 +4,35 @@
 #include <vector>
 #include <limits>
 
+// Classe responsável por representar uma página, possui variáveis e métodos que permitem saber quando a página foi
+// acessada pela última vez e quando será acessada novamente.
 class Pagina {
-   unsigned int _id;
-   unsigned int movidaPraRAM;
-   mutable unsigned int ultimoAcesso;
-   mutable unsigned int indexProximoAcesso = 0;
-   // unsigned int proximoAcesso;
-
+   unsigned int _id;                                  // ID da página
+   mutable unsigned int ultimoAcesso;                 // Último instante em que a página foi acessada
+   mutable unsigned int indexProximoAcesso = 0;       // Índice do vector ordemDeAcessos em que está o próximo instante que a página será acessada 
+   mutable std::vector<unsigned int> ordemDeAcessos;  // Vector que armazena os instantes em que a página será acessada
 
    public:
-   mutable std::vector<unsigned int> ordemDeAcessos;
+      // Construtor e Destrutor
       Pagina(unsigned int id);
-      // Pagina(const Pagina&);
       ~Pagina();
 
-      void setUltimoAcesso(unsigned int instante) const;
+      // Adiciona um instante em que a página será acessada para que sejá possível implementar o algoritmo ótimo
       void addAcessoFuturo(unsigned int instante) const;
+      // Aumenta o índice de acesso ao vector ordemDeAcessos para otimizar a execução do algoritmo ótimo
       void increaseIndexProximoAcesso() const;
 
+      // SETs
+      void setUltimoAcesso(unsigned int instante) const;
+
+      // GETs
       unsigned int getId() const;
       unsigned int getUltimoAcesso() const;
+      // Retorna o instante do próximo acesso ou o maior unsigned int possível caso a página já tenha sido acessada todas as vezes
       unsigned int getProximoAcesso() const;
       
-      
+      // Sobrecarga de operador e classe interna para fazer hash, são usadas para permitir o uso da estrutura de dados
+      // unordered_set, que foi utilizada para otimizar a execução do algoritmo ótimo
       bool operator==(const Pagina& o) const;
       class HashFunction {
          public:
@@ -34,8 +40,6 @@ class Pagina {
             return std::hash<int>()(pagina._id);
          }
       };
-
-
 };
 
 #endif
