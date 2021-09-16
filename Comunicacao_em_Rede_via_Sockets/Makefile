@@ -1,10 +1,10 @@
 PROJ_NAME=Comunicacao_em_Rede_via_Sockets
 
 # .c files
-C_SOURCE=$(filter-out src/Servidor.cpp src/Cliente.cpp, $(wildcard src/*.cpp))
+C_SOURCE=$(filter-out src/main_loja.cpp src/main_cliente.cpp, $(wildcard src/*.cpp))
 
 # .h files
-H_SOURCE=$(filter-out Servidor.h Cliente.h, $(wildcard src/*.h))
+H_SOURCE=$(wildcard src/*.h)
 
 # Object files
 OBJ=$(C_SOURCE:.cpp=.o)
@@ -22,7 +22,7 @@ CC_FLAGS= -Wall      \
           -std=c++17 \
 			 -g			\
 			 -pthread   \
-			#  -Werror		\
+			 -Werror		\
 
 #
 # Compilation and linking
@@ -36,20 +36,20 @@ all: $(executables)
 # 	$(CC) -o $@ $^ $(CC_FLAGS)
 # $(CC) -o src/servidor.o -c src/Servidor.cpp $(CC_FLAGS)
 # $(CC) -o src/cliente.o -c src/Cliente.cpp $(CC_FLAGS)
-servidor: $(OBJ) src/Servidor.o
+servidor: $(OBJ) src/main_loja.o
 	$(CC) -o $@ $^ $(CC_FLAGS)
 
-cliente: $(OBJ) src/Cliente.o
+cliente: $(OBJ) src/main_cliente.o
 	$(CC) -o $@ $^ $(CC_FLAGS)
 
 %.o: %.cpp %.h
 	$(CC) -o $@ -c $< $(CC_FLAGS)
 
-src/Servidor.o: src/Servidor.cpp
-	$(CC) -o src/Servidor.o -c src/Servidor.cpp $(CC_FLAGS)
+src/main_loja.o: src/main_loja.cpp
+	$(CC) -o src/main_loja.o -c src/main_loja.cpp $(CC_FLAGS)
 
-src/Cliente.o: src/Cliente.cpp
-	$(CC) -o src/Cliente.o -c src/Cliente.cpp $(CC_FLAGS)
+src/main_cliente.o: src/main_cliente.cpp
+	$(CC) -o src/main_cliente.o -c src/main_cliente.cpp $(CC_FLAGS)
 
 # teste:
 # 	$(OBJ)

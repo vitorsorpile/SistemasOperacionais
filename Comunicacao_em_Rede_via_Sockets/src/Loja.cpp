@@ -1,80 +1,14 @@
 #include "Loja.h"
 
-// void  Loja::atenderCliente(Loja* loja, int cliente) {
-     
-//      std::cout << "Entrou na test " << cliente << std::endl;
-     
-//    while (1) {
-//       loja->imprimeEstoque();
-
-//       if (loja->estoqueVazio()) close(loja->getServerFD());
-//    Mensagem msg;
-//    char buffer[1024] = {0};
-//    read( cliente , &msg, sizeof(Mensagem) );
-//    // read( cliente , buffer, 1024 );
-//    // std::cout << "test buffer: " << buffer << std::endl;
-//    // std::cout << msg.getQuantidade() << std::endl;
-//    // std::string str = "Pedido recebido";
-//    std::string str;
-
-//    // send( cliente , str.c_str() , str.size(), 0 );
-
-//    // continue;
-//    // return;
-//    switch (msg.getTipo())
-//    {
-
-//    case tipoDaMensagem::ENTRADA :
-//       std::cout << "Cliente " << cliente << " chegou na loja." << std::endl;
-//       str = "Seja bem-vindo à loja de bebidas!\n";
-//       str += "Faça seu pedido digitando o número correspondente à bebida desejada e a quantidade separadas por espaço.\n";
-//       str += "Menu: \n";
-//       str += "1 -> Água\n";
-//       str += "2 -> Cerveja\n";
-//       str += "3 -> Refrigerante\n";
-//       str += "0 -> Sair da loja\n";
-//       break;
-   
-//    case tipoDaMensagem::PEDIDO:
-//       if (loja->tratarPedido(msg.getBebida(), msg.getQuantidade())) {
-//          str = "Aqui está seu pedido.\n";
-//       }
-//       else {
-//          str = "Seu pedido não pode ser atendido.\n";
-//       }
-//       break;
-
-//    case tipoDaMensagem::SAIDA:
-//       str = "Muito obrigado! Volte sempre!\n";
-//       break;
-//    default:
-//       str = "Mensagem inválida\n";
-//       break;
-//    }
-//    // this->sendMessage<char const>(last_socket, str.c_str(), str.length());
-//    write(cliente, str.c_str(), str.size());
-//    std::cout << "Mensagem enviada: " << str << std::endl;
-
-//    if (msg.getTipo() == tipoDaMensagem::SAIDA) return; 
-//    // close(cliente);
-//    }
-// }
-
 Loja::Loja(short unsigned int porta, unsigned int qtdAgua, unsigned int qtdCerveja, unsigned int qtdRefrigerante, unsigned int maxClientes)
    : Socket::Server(porta, maxClientes) {
       this->estoque[AGUA] = qtdAgua;
       this->estoque[CERVEJA] = qtdCerveja;
       this->estoque[REFRIGERANTE] = qtdRefrigerante;
-      // this->nAguasDisponiveis = qtdAgua;
-      // this->nCervejasDisponiveis = qtdCerveja;
-      // this->nRefrigerantesDisponiveis = qtdRefrigerante;
    }
 
 Loja::~Loja() {}
 
-// void Loja::answerMessage(void *msg) {
-
-// }
 
 bool Loja::tratarPedido(int bebida, unsigned int quantidade) {
    if (bebida > 2 || quantidade > this->estoque[bebida])
@@ -89,11 +23,9 @@ void Loja::comecarExpediente() {
    int sd, max_sd, activity, new_socket;
    long int valread;
    int addrlen = sizeof(this->_address);
-   //   char buffer [1025];
-   Mensagem msg;
+   int pedido[2] = {0};
    std::string message;      
 
-   std::cout << "Waiting for connections ..." << std::endl;
    while(!this->estoqueVazio()) {  
          // Clear console
          // std::cout << "\x1B[2J\x1B[H";
@@ -126,7 +58,6 @@ void Loja::comecarExpediente() {
        
         if ((activity < 0) && (errno!=EINTR))  
         {  
-            // printf("select error");  
             std::cout << "select error" << std::endl;
         }  
              
@@ -139,13 +70,8 @@ void Loja::comecarExpediente() {
                 perror("accept");  
                 exit(EXIT_FAILURE);  
             }  
-             
-            //inform user of socket number - used in send and receive commands 
-            // printf("New connection , socket fd is %d , ip is : %s , port : %d\n" , new_socket ,
-            //    inet_ntoa(_address.sin_addr) , ntohs(_address.sin_port));  
            
             //send new connection greeting message 
-
             message = "Seja bem-vindo à loja de bebidas!\n";
             message += "Faça seu pedido digitando o número correspondente à bebida desejada e a quantidade no formato {bebida quantidade}.\n";
             message += "Menu: \n";
@@ -158,7 +84,6 @@ void Loja::comecarExpediente() {
                 perror("send");  
             }  
                  
-            // puts("Welcome message sent successfully"); 
             std::cout << "Cliente " << new_socket << " chegou na loja." << std::endl; 
                  
             //add new socket to array of sockets 
@@ -167,9 +92,7 @@ void Loja::comecarExpediente() {
                 //if position is empty 
                 if( this->clientsSockets[i] == 0 )  
                 {  
-                    this->clientsSockets[i] = new_socket;  
-                    printf("Adding to list of sockets as %d\n" , i);  
-                         
+                    this->clientsSockets[i] = new_socket;                           
                     break;  
                 }  
             }  
@@ -183,12 +106,10 @@ void Loja::comecarExpediente() {
             {  
                 //Check if it was for closing , and also read the 
                 //incoming message 
-                if ((valread = read( sd, &msg, sizeof(Mensagem))) == 0)  
+                if ((valread = read( sd, pedido, 2*sizeof(unsigned int))) == 0)  
                 {  
                     //Somebody disconnected , get his details and print 
                     getpeername(sd , (struct sockaddr*)&_address , (socklen_t*)&addrlen);  
-                    printf("Host disconnected , ip %s , port %d \n" , 
-                    inet_ntoa(_address.sin_addr) , ntohs(_address.sin_port));  
                          
                     //Close the socket and mark as 0 in list for reuse 
                     close( sd );  
@@ -199,7 +120,7 @@ void Loja::comecarExpediente() {
                 else 
                 {  
                   
-                  if (this->tratarPedido(msg.getBebida(), msg.getQuantidade())) {
+                  if (this->tratarPedido(pedido[0], pedido[1])) {
                      message = "Aqui está seu pedido.\n";
                   } else
                      message = "Seu pedido não pode ser atendido.\n";
@@ -207,10 +128,7 @@ void Loja::comecarExpediente() {
 
                     //set the string terminating NULL byte on the end 
                     //of the data read 
-                    // answerMessage(buffer);
                     this->sendMessage(sd, message.c_str(), message.size());
-                    // buffer[valread] = '\0';  
-                    // send(sd , buffer , strlen(buffer) , 0 );  
                }  
             }  
         }
