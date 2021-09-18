@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
       return -1;
    }
 
-   Loja loja( (short unsigned) porta, qtdAguas, qtdCervejas, qtdRefrigerantes );
+   Loja loja( (short unsigned) porta, qtdAguas, qtdCervejas, qtdRefrigerantes, 2 );
    loja.comecarExpediente();
 
    std::cout << "Expediente finalizado." << std::endl;

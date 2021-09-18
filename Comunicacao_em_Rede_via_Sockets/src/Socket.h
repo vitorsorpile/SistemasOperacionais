@@ -20,7 +20,8 @@ namespace Socket {
 
    class Server {
       protected:
-         int serverFD, last_socket, opt, _maxClients;
+         int serverFD, last_socket, opt;
+         unsigned int _maxClients;
          fd_set readfds; 
          std::vector<int> clientsSockets;
          struct sockaddr_in _address;
@@ -51,6 +52,7 @@ namespace Socket {
          Client(std::string address, short unsigned port);
          ~Client();
 
+         void connectToServer();
          template <typename T>
          void sendMessage(T* msg, size_t TSize ) {
             send( this->sock, msg , TSize, 0 );

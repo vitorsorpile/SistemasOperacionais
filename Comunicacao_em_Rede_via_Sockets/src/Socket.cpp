@@ -10,7 +10,7 @@ namespace Socket {
       this->opt = 1;  
 
       //initialise all clientsSockets to 0 so not checked 
-      for (int i = 0; i < this->_maxClients; i++) {  
+      for (unsigned int i = 0; i < this->_maxClients; i++) {  
          this->clientsSockets[i] = 0;  
       }  
       
@@ -73,13 +73,15 @@ namespace Socket {
       {
          std::cout << "Invalid address/ Address not supported" << std::endl;
          exit(EXIT_FAILURE);
-      }
-      
-      if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+      }   
+   }
+
+   void Client::connectToServer() {
+      if (connect(this->sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
       {
          std::cout << "Connection Failed" << std::endl;
          exit(EXIT_FAILURE);
-      }      
+      }   
    }
 
    Client::~Client() {}

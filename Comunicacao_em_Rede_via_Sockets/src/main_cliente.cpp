@@ -11,10 +11,16 @@ int main(int argc, char const *argv[])
 
    int porta = std::stoi(argv[2]);
 
-   Cliente cl( argv[1], (short unsigned) porta);
    int pedido[2];
+   Cliente cl( argv[1], (short unsigned) porta);
+   cl.connectToServer();
 
    while (true) {
+      if (!cl.receberResposta()) {
+         // std::cout << "Ocorreu um problema na conexão com o servidor..." << std::endl;
+         break;
+      }
+
       std::cin >> pedido[0];
       
       if (pedido[0] == 0) {
@@ -25,9 +31,5 @@ int main(int argc, char const *argv[])
       std::cin >> pedido[1];
 
       cl.fazerPedido(pedido);
-      if (!cl.receberResposta()) {
-         std::cout << "Ocorreu um problema na conexão com o servidor..." << std::endl;
-         break;
-      }
    }
 }

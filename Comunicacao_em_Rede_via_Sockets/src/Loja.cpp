@@ -19,7 +19,7 @@ bool Loja::tratarPedido(int bebida, unsigned int quantidade) {
 }
 
 void Loja::comecarExpediente() {
-
+   unsigned int i;
    int sd, max_sd, activity, new_socket;
    long int valread;
    int addrlen = sizeof(this->_address);
@@ -29,7 +29,7 @@ void Loja::comecarExpediente() {
    while(!this->estoqueVazio()) {  
          // Clear console
          // std::cout << "\x1B[2J\x1B[H";
-         this->imprimeEstoque();
+        this->imprimeEstoque();
         //clear the socket set 
         FD_ZERO(&readfds);  
      
@@ -38,7 +38,7 @@ void Loja::comecarExpediente() {
         max_sd = this->serverFD;  
              
         //add child sockets to set 
-        for (int i = 0 ; i < this->_maxClients ; i++)  
+        for (i = 0 ; i < this->_maxClients ; i++)  
         {  
             //socket descriptor 
             sd = this->clientsSockets[i];  
@@ -64,6 +64,8 @@ void Loja::comecarExpediente() {
         //If something happened on the master socket, then its an incoming connection 
         if (FD_ISSET(this->serverFD, &readfds))  
         {  
+
+
             if ((new_socket = accept(this->serverFD, 
                     (struct sockaddr *)&_address, (socklen_t*)&addrlen))<0)  
             {  
@@ -71,6 +73,16 @@ void Loja::comecarExpediente() {
                 exit(EXIT_FAILURE);  
             }  
            
+            if (this->clientesNaLoja == this->_maxClients) {
+                message = "A loja está cheia no momento. Por favor volte mais tarde.\n";
+
+                send(new_socket, message.c_str(), message.size(), 0);
+
+                close(new_socket);
+                continue;
+            }
+
+            this->clientesNaLoja++;
             //send new connection greeting message 
             message = "Seja bem-vindo à loja de bebidas!\n";
             message += "Faça seu pedido digitando o número correspondente à bebida desejada e a quantidade no formato {bebida quantidade}.\n";
@@ -87,7 +99,7 @@ void Loja::comecarExpediente() {
             std::cout << "Cliente " << new_socket << " chegou na loja." << std::endl; 
                  
             //add new socket to array of sockets 
-            for (int i = 0; i < this->_maxClients; i++)  
+            for (i = 0; i < this->_maxClients; i++)  
             {  
                 //if position is empty 
                 if( this->clientsSockets[i] == 0 )  
@@ -98,7 +110,7 @@ void Loja::comecarExpediente() {
             }  
         }  
         //else its some IO operation on some other socket
-        for (int i = 0; i < this->_maxClients; i++)  
+        for (i = 0; i < this->_maxClients; i++)  
         {  
             sd = this->clientsSockets[i];  
                  
@@ -114,6 +126,7 @@ void Loja::comecarExpediente() {
                     //Close the socket and mark as 0 in list for reuse 
                     close( sd );  
                     this->clientsSockets[i] = 0;  
+                    this->clientesNaLoja--;
                 }  
                      
                 //Echo back the message that came in 
@@ -133,7 +146,7 @@ void Loja::comecarExpediente() {
             }  
         }
 
-        for (int i = 0; i < this->_maxClients; i++)
+        for (i = 0; i < this->_maxClients; i++)
          if (this->clientsSockets[i] != 0) 
             shutdown(this->clientsSockets[i], SHUT_RDWR);
     }  
@@ -148,9 +161,9 @@ bool Loja::estoqueVazio() {
 }
 
 void Loja::imprimeEstoque() {
-      std::cout << "===== Estoque =====" << std::endl;
-      std::cout << "Agua -> " << this->estoque[AGUA] << std::endl;
-      std::cout << "Cerveja -> " << this->estoque[CERVEJA] << std::endl;
-      std::cout << "Refrigerante -> " << this->estoque[REFRIGERANTE] << std::endl;
-      std::cout << "==================" << std::endl;
+      std::cout << "------ Estoque -----" << std::endl;
+      std::cout << " Agua -> " << this->estoque[AGUA] << std::endl;
+      std::cout << " Cerveja -> " << this->estoque[CERVEJA] << std::endl;
+      std::cout << " Refrigerante -> " << this->estoque[REFRIGERANTE] << std::endl;
+      std::cout << "--------------------" << std::endl;
 }

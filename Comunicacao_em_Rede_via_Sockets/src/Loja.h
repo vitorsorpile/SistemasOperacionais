@@ -8,6 +8,7 @@ enum Bebidas {AGUA, CERVEJA, REFRIGERANTE};
 class Loja: public Socket::Server {
    private:
       unsigned int estoque[3] = {0};
+      unsigned int clientesNaLoja = 0;
 
 
       bool tratarPedido(int bebida, unsigned int quantidade);
